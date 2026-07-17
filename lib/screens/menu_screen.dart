@@ -6,12 +6,32 @@ import '../utils/game_state.dart';
 import '../widgets/cyber_background.dart';
 import '../widgets/xiu_mascot.dart';
 
-class MenuScreen extends StatelessWidget {
+class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<MenuScreen> createState() => _MenuScreenState();
+}
+
+class _MenuScreenState extends State<MenuScreen> {
+  late TextEditingController _nameCtrl;
+
+  @override
+  void initState() {
+    super.initState();
     final game = context.read<GameState>();
+    _nameCtrl = TextEditingController(text: game.username);
+  }
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final game = context.watch<GameState>();
 
     return Stack(
       fit: StackFit.expand,
@@ -19,7 +39,7 @@ class MenuScreen extends StatelessWidget {
         // Matrix rain background
         const CyberBackground(),
         // Dark overlay
-        Container(color: const Color(0xFF121212).withValues(alpha: 0.75)),
+        Container(color: const Color(0xFF121212).withValues(alpha: 0.55)),
 
         SafeArea(
           child: Column(
@@ -79,7 +99,7 @@ class MenuScreen extends StatelessWidget {
               const Spacer(),
 
               // ── XIU Mascot ──
-              const XiuMascot(state: XiuState.normal, size: 200)
+              const XiuMascot(state: XiuState.normal, size: 180)
                   .animate()
                   .fadeIn(duration: 600.ms, delay: 400.ms),
 
@@ -94,6 +114,52 @@ class MenuScreen extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ).animate().fadeIn(delay: 800.ms),
+
+              // ── Username Input ──
+              Container(
+                width: 240,
+                margin: const EdgeInsets.symmetric(vertical: 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '⚡ CODENAME OPERATOR',
+                      style: TextStyle(
+                        fontFamily: 'Courier New',
+                        fontSize: 9,
+                        color: const Color(0xFF00b4d8),
+                        letterSpacing: 1.5,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    TextField(
+                      controller: _nameCtrl,
+                      onChanged: (val) => game.setUsername(val),
+                      style: const TextStyle(
+                        fontFamily: 'Courier New',
+                        fontSize: 14,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: const Color(0xFF00ff41).withValues(alpha: 0.4), width: 1.5),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: const Color(0xFF00ff41), width: 2),
+                        ),
+                        fillColor: Colors.black.withValues(alpha: 0.6),
+                        filled: true,
+                      ),
+                    ),
+                  ],
+                ),
+              ).animate().fadeIn(delay: 900.ms),
 
               const Spacer(),
 

@@ -22,7 +22,7 @@ class SuccessScreen extends StatelessWidget {
       fit: StackFit.expand,
       children: [
         const CyberBackground(),
-        Container(color: const Color(0xFF000d00).withValues(alpha: 0.85)),
+        Container(color: const Color(0xFF000d00).withValues(alpha: 0.65)),
 
         SafeArea(
           child: Column(

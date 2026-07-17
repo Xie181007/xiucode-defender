@@ -7,11 +7,11 @@ import '../data/levels_data.dart';
 
 enum GameScreen { menu, briefing, playing, success, gameOver, leaderboard }
 enum XiuState { normal, success, fail }
-
 class GameState extends ChangeNotifier {
   // ─── State ───
   GameScreen _screen = GameScreen.menu;
   XiuState _xiuState = XiuState.normal;
+  String _username = 'xiudeveloper';
 
   int _currentLevelIndex = 0;
   int _currentCommandIndex = 0;
@@ -26,9 +26,33 @@ class GameState extends ChangeNotifier {
 
   List<TerminalLine> _terminalLines = [];
 
+  GameState() {
+    _loadUsername();
+  }
+
+  Future<void> _loadUsername() async {
+    final prefs = await SharedPreferences.getInstance();
+    _username = prefs.getString('username') ?? 'xiudeveloper';
+    notifyListeners();
+  }
+
   // ─── Getters ───
   GameScreen get screen => _screen;
   XiuState get xiuState => _xiuState;
+  String get username => _username;
+
+  void setUsername(String value) {
+    if (value.trim().isNotEmpty) {
+      _username = value.trim();
+      _saveUsername(_username);
+      notifyListeners();
+    }
+  }
+
+  Future<void> _saveUsername(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', name);
+  }
   int get currentLevelIndex => _currentLevelIndex;
   int get secondsRemaining => _secondsRemaining;
   int get totalScore => _totalScore;
@@ -143,7 +167,7 @@ class GameState extends ChangeNotifier {
     if (trimmed.isEmpty) return false;
 
     // Add player input line
-    _addLine('root@xiucorp:\$ $trimmed', LineType.input);
+    _addLine('$_username@xiucode:\$ $trimmed', LineType.input);
 
     // Validate command
     if (_matchesCommand(trimmed, currentCommand)) {

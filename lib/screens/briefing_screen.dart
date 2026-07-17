@@ -49,7 +49,7 @@ class _BriefingScreenState extends State<BriefingScreen> {
       fit: StackFit.expand,
       children: [
         const CyberBackground(),
-        Container(color: const Color(0xFF121212).withValues(alpha: 0.82)),
+        Container(color: const Color(0xFF121212).withValues(alpha: 0.62)),
         SafeArea(
           child: Column(
             children: [

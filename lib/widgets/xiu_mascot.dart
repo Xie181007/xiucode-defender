@@ -27,6 +27,8 @@ class XiuMascot extends StatelessWidget {
       width: size,
       height: size,
       fit: BoxFit.contain,
+      filterQuality: FilterQuality.high,
+      isAntiAlias: true,
       errorBuilder: (ctx, e, s) => _fallbackMascot(),
     );
 

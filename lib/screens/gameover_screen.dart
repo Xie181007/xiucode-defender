@@ -18,7 +18,7 @@ class GameOverScreen extends StatelessWidget {
       fit: StackFit.expand,
       children: [
         const CyberBackground(),
-        Container(color: const Color(0xFF1a0000).withValues(alpha: 0.88)),
+        Container(color: const Color(0xFF1a0000).withValues(alpha: 0.65)),
 
         SafeArea(
           child: Column(

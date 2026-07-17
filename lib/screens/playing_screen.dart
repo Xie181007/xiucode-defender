@@ -115,86 +115,103 @@ class _PlayingScreenState extends State<PlayingScreen>
       child: SafeArea(
         child: Column(
           children: [
-            // ── Top HUD ──
+            // ── Top HUD (2x2 Grid on Left + Taller Vertical Timer on Right) ──
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: const Color(0xFF00ff41).withValues(alpha: 0.2),
+                    color: const Color(0xFF00ff41).withValues(alpha: 0.15),
                   ),
                 ),
+                color: const Color(0xFF161616),
               ),
-              child: Row(
-                children: [
-                  // Level badge
-                  _hudBadge('LVL', '${level.id}/15',
-                      const Color(0xFF00ff41)),
-                  const SizedBox(width: 8),
-                  _hudBadge('SCORE', '${game.totalScore + game.levelScore}',
-                      const Color(0xFF00b4d8)),
-                  const SizedBox(width: 8),
-                  _hudBadge('ERR', '${game.wrongCount}',
-                      isDanger ? const Color(0xFFFF4444) : const Color(0xFFff0066)),
-                  const Spacer(),
-                  // Timer
-                  TimerDisplay(secondsRemaining: game.secondsRemaining),
-                ],
+              child: IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Left 2x2 Grid of Info Badges
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(child: _hudBadge('LEVEL', '${level.id}/15', const Color(0xFF00ff41))),
+                              const SizedBox(width: 8),
+                              Expanded(child: _hudBadge('SCORE', '${game.totalScore + game.levelScore}', const Color(0xFF00b4d8))),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Expanded(child: _hudBadge('ERRORS', '${game.wrongCount}', isDanger ? const Color(0xFFFF4444) : const Color(0xFFff0066))),
+                              const SizedBox(width: 8),
+                              Expanded(child: _hudBadge('OPERATOR', game.username.toUpperCase(), const Color(0xFFFFD700))),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Right Taller Vertical Timer
+                    TimerDisplay(secondsRemaining: game.secondsRemaining),
+                  ],
+                ),
               ),
             ),
 
-            // ── Main area: Terminal + XIU ──
+            // ── Main area: Terminal Viewport with Overlapping Character Circle ──
             Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              child: Stack(
                 children: [
-                  // ── Terminal area ──
-                  Expanded(
-                    flex: 3,
-                    child: Column(
-                      children: [
-                        // Terminal header
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          color: const Color(0xFF1a1a1a),
-                          child: Row(
-                            children: [
-                              _dot(const Color(0xFFFF5F57)),
-                              const SizedBox(width: 6),
-                              _dot(const Color(0xFFFFBD2E)),
-                              const SizedBox(width: 6),
-                              _dot(const Color(0xFF28CA41)),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  'root@xiucorp:~\$ — ${level.targetIP}',
-                                  style: const TextStyle(
-                                    fontFamily: 'Courier New',
-                                    fontSize: 11,
-                                    color: Color(0xFF888888),
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              // Command progress
-                              Text(
-                                'CMD ${game.currentCommandIndex + 1}/${game.commandsInLevel}',
+                  // The Terminal Container
+                  Column(
+                    children: [
+                      // Terminal header (matching mockup text)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        color: const Color(0xFF1a1a1a),
+                        child: Row(
+                          children: [
+                            _dot(const Color(0xFFFF5F57)),
+                            const SizedBox(width: 6),
+                            _dot(const Color(0xFFFFBD2E)),
+                            const SizedBox(width: 6),
+                            _dot(const Color(0xFF28CA41)),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'terminal kali : ${game.username}@xiucode',
                                 style: const TextStyle(
                                   fontFamily: 'Courier New',
-                                  fontSize: 10,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
                                   color: Color(0xFF00ff41),
                                 ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ],
-                          ),
+                            ),
+                            // Target IP & Command progress info
+                            Text(
+                              'IP: ${level.targetIP} | CMD: ${game.currentCommandIndex + 1}/${game.commandsInLevel}',
+                              style: const TextStyle(
+                                fontFamily: 'Courier New',
+                                fontSize: 10,
+                                color: Color(0xFF888888),
+                              ),
+                            ),
+                          ],
                         ),
+                      ),
 
-                        // Terminal output
-                        Expanded(
+                      // Terminal output log
+                      Expanded(
+                        child: Container(
+                          color: const Color(0xFF0a0a0a),
+                          width: double.infinity,
                           child: ListView.builder(
                             controller: _scrollCtrl,
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 120), // Bottom padding for mascot overlap
                             itemCount: game.terminalLines.length,
                             itemBuilder: (ctx, i) {
                               final line = game.terminalLines[i];
@@ -202,86 +219,59 @@ class _PlayingScreenState extends State<PlayingScreen>
                             },
                           ),
                         ),
+                      ),
+                    ],
+                  ),
 
-                        // Input field
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 8),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(
-                                color: isDanger
-                                    ? const Color(0xFFFF4444).withValues(alpha: 0.5)
-                                    : const Color(0xFF00ff41).withValues(alpha: 0.2),
-                              ),
-                            ),
-                            color: const Color(0xFF0d0d0d),
+                  // Overlapping Character Circle (mockup bottom right)
+                  Positioned(
+                    bottom: 16,
+                    right: 16,
+                    child: GestureDetector(
+                      onTap: () => _showHint(context, game),
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.black.withValues(alpha: 0.85),
+                          border: Border.all(
+                            color: isDanger ? const Color(0xFFFF4444) : const Color(0xFF00ff41),
+                            width: 2.5,
                           ),
-                          child: Row(
+                          boxShadow: [
+                            BoxShadow(
+                              color: (isDanger ? const Color(0xFFFF4444) : const Color(0xFF00ff41)).withValues(alpha: 0.5),
+                              blurRadius: 16,
+                              spreadRadius: 3,
+                            ),
+                          ],
+                        ),
+                        child: ClipOval(
+                          child: Stack(
                             children: [
-                              Text(
-                                'root@xiucorp:\$ ',
-                                style: TextStyle(
-                                  fontFamily: 'Courier New',
-                                  fontSize: 14,
-                                  color: isDanger
-                                      ? const Color(0xFFFF4444)
-                                      : const Color(0xFF00ff41),
-                                  fontWeight: FontWeight.bold,
+                              Center(
+                                child: Transform.scale(
+                                  scale: 1.2,
+                                  child: XiuMascot(state: game.xiuState, size: 85),
                                 ),
                               ),
-                              Expanded(
-                                child: TextField(
-                                  controller: _inputCtrl,
-                                  focusNode: _focusNode,
-                                  style: const TextStyle(
-                                    fontFamily: 'Courier New',
-                                    fontSize: 14,
-                                    color: Colors.white,
-                                  ),
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                    isDense: true,
-                                    contentPadding: EdgeInsets.zero,
-                                    hintText: 'ketik command...',
-                                    hintStyle: TextStyle(
-                                      fontFamily: 'Courier New',
-                                      fontSize: 13,
-                                      color: Color(0xFF444444),
-                                    ),
-                                  ),
-                                  cursorColor: const Color(0xFF00ff41),
-                                  onSubmitted: (_) => _submit(),
-                                  textInputAction: TextInputAction.send,
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: _submit,
+                              // Floating text badge for status hint trigger
+                              Positioned(
+                                bottom: 4,
+                                left: 0,
+                                right: 0,
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4),
-                                    color: isDanger
-                                        ? const Color(0xFFFF4444)
-                                            .withValues(alpha: 0.2)
-                                        : const Color(0xFF00ff41)
-                                            .withValues(alpha: 0.15),
-                                    border: Border.all(
-                                      color: isDanger
-                                          ? const Color(0xFFFF4444)
-                                          : const Color(0xFF00ff41),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'ENTER',
+                                  padding: const EdgeInsets.symmetric(vertical: 2),
+                                  color: Colors.black.withValues(alpha: 0.6),
+                                  child: const Text(
+                                    'TAP FOR HINT',
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontFamily: 'Courier New',
-                                      fontSize: 12,
-                                      color: isDanger
-                                          ? const Color(0xFFFF4444)
-                                          : const Color(0xFF00ff41),
+                                      fontSize: 7,
                                       fontWeight: FontWeight.bold,
+                                      color: Color(0xFFFFAA00),
                                     ),
                                   ),
                                 ),
@@ -289,79 +279,84 @@ class _PlayingScreenState extends State<PlayingScreen>
                             ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
+                ],
+              ),
+            ),
 
-                  // ── XIU Sidebar ──
-                  Container(
-                    width: 110,
-                    decoration: BoxDecoration(
-                      border: Border(
-                        left: BorderSide(
-                          color: const Color(0xFF00ff41).withValues(alpha: 0.15),
+            // ── Bottom Area: Input Syntax bar ──
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: isDanger
+                        ? const Color(0xFFFF4444).withValues(alpha: 0.4)
+                        : const Color(0xFF00ff41).withValues(alpha: 0.15),
+                  ),
+                ),
+                color: const Color(0xFF080808),
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    '${game.username}@xiucode:\$ ',
+                    style: TextStyle(
+                      fontFamily: 'Courier New',
+                      fontSize: 14,
+                      color: isDanger ? const Color(0xFFFF4444) : const Color(0xFF00ff41),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: _inputCtrl,
+                      focusNode: _focusNode,
+                      style: const TextStyle(
+                        fontFamily: 'Courier New',
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.zero,
+                        hintText: 'ketikan syntax terminal...',
+                        hintStyle: TextStyle(
+                          fontFamily: 'Courier New',
+                          fontSize: 13,
+                          color: Color(0xFF555555),
                         ),
                       ),
-                      color: const Color(0xFF0d1a0d),
+                      cursorColor: const Color(0xFF00ff41),
+                      onSubmitted: (_) => _submit(),
+                      textInputAction: TextInputAction.send,
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        XiuMascot(state: game.xiuState, size: 90),
-                        const SizedBox(height: 8),
-                        // Status label
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 3),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(3),
-                            color: _xiuStatusColor(game.xiuState)
-                                .withValues(alpha: 0.15),
-                            border: Border.all(
-                              color: _xiuStatusColor(game.xiuState),
-                              width: 0.5,
-                            ),
-                          ),
-                          child: Text(
-                            _xiuStatusLabel(game.xiuState),
-                            style: TextStyle(
-                              fontFamily: 'Courier New',
-                              fontSize: 9,
-                              color: _xiuStatusColor(game.xiuState),
-                              letterSpacing: 1,
-                            ),
-                          ),
+                  ),
+                  GestureDetector(
+                    onTap: _submit,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: isDanger
+                            ? const Color(0xFFFF4444).withValues(alpha: 0.2)
+                            : const Color(0xFF00ff41).withValues(alpha: 0.15),
+                        border: Border.all(
+                          color: isDanger ? const Color(0xFFFF4444) : const Color(0xFF00ff41),
                         ),
-                        const SizedBox(height: 16),
-                        // Hint button
-                        GestureDetector(
-                          onTap: () {
-                            _showHint(context, game);
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 8),
-                            padding: const EdgeInsets.symmetric(vertical: 6),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(
-                                color: const Color(0xFFFFAA00).withValues(alpha: 0.6),
-                              ),
-                              color:
-                                  const Color(0xFFFFAA00).withValues(alpha: 0.07),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                '💡 HINT',
-                                style: TextStyle(
-                                  fontFamily: 'Courier New',
-                                  fontSize: 10,
-                                  color: Color(0xFFFFAA00),
-                                ),
-                              ),
-                            ),
-                          ),
+                      ),
+                      child: Text(
+                        'RUN',
+                        style: TextStyle(
+                          fontFamily: 'Courier New',
+                          fontSize: 12,
+                          color: isDanger ? const Color(0xFFFF4444) : const Color(0xFF00ff41),
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ],

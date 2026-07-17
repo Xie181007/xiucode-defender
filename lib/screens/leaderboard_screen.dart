@@ -36,7 +36,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
       fit: StackFit.expand,
       children: [
         const CyberBackground(),
-        Container(color: const Color(0xFF121212).withValues(alpha: 0.88)),
+        Container(color: const Color(0xFF121212).withValues(alpha: 0.68)),
 
         SafeArea(
           child: Column(

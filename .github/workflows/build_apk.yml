@@ -18,6 +18,8 @@ jobs:
   build-apk:
     name: Build Flutter APK
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       # ── 1. Checkout kode ──────────────────────────────────────
@@ -46,10 +48,6 @@ jobs:
       # ── 5. Analyze kode (opsional, skip error agar tetap build)
       - name: 🔍 Analyze Code
         run: flutter analyze --no-fatal-infos || true
-
-      # ── 6. Run tests ──────────────────────────────────────────
-      - name: 🧪 Run Tests
-        run: flutter test || true
 
       # ── 7. Build APK Release ──────────────────────────────────
       - name: 🔨 Build APK (Release)

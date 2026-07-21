@@ -22,6 +22,7 @@ class GameLevel {
   final String targetIP;
   final String objective;
   final String briefingText;
+  final String storyText;
   final List<LevelCommand> commands;
   final int baseScore;
 
@@ -32,6 +33,7 @@ class GameLevel {
     required this.targetIP,
     required this.objective,
     required this.briefingText,
+    this.storyText = '',
     required this.commands,
     this.baseScore = 1000,
   });

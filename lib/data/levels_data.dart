@@ -12,7 +12,15 @@ final List<GameLevel> gameLevels = [
     targetIP: '192.168.1.101',
     objective: 'Scan semua port target dan identifikasi service yang berjalan.',
     briefingText:
-        'TARGET TERDETEKSI. IP 192.168.1.101 aktif di jaringan. Mulai dengan port scan untuk pemetaan awal. Waktu 5 menit — BERGERAK!',
+        'TARGET TERDETEKSI. IP 192.168.1.101 aktif di jaringan. Mulai dengan port scan untuk pemetaan awal. Waktu 5 menit -- BERGERAK!',
+    storyText:
+        'Operator, ini XIU dari XiuCorp Security Operations Center.\n\n'
+        'Kami mendeteksi aktivitas mencurigakan dari node eksternal di IP 192.168.1.101. '
+        'Jaringan ini terhubung ke infrastruktur inti kami di Jl. Kembang Jepun, Surabaya. '
+        'Ancaman ini harus dimitigasi SEBELUM mencapai core firewall kami.\n\n'
+        'Misi pertamamu: lakukan reconnaissance untuk memetakan semua port terbuka. '
+        'Identifikasi service yang berjalan. Setiap informasi kritis untuk tahap selanjutnya.\n\n'
+        'XiuCorp mengandalkanmu. Jangan gagal.',
     commands: [
       LevelCommand(
         command: 'nmap -sV 192.168.1.101',
@@ -44,6 +52,12 @@ final List<GameLevel> gameLevels = [
         'Lakukan fingerprinting OS dan ambil banner service SSH target.',
     briefingText:
         'Target baru: 10.0.0.45. Intel menunjukkan ada SSH yang berjalan. Identifikasi OS dan versi exak service. Mulai fingerprinting!',
+    storyText:
+        'Laporan intel XiuCorp mengonfirmasi bahwa node 10.0.0.45 merupakan bagian dari '
+        'cluster server cadangan kami di Surabaya. Namun, akses SSH dari IP tidak dikenal terdeteksi.\n\n'
+        'Kemungkinan besar ada aktor jahat yang telah menanam backdoor di server ini. '
+        'Tugasmu: identifikasi OS dan versi service untuk menentukan vector serangan yang tepat.\n\n'
+        'Tim forensik kami di Kya-Kya sedang menunggu laporanmu. Lanjutkan!',
     commands: [
       LevelCommand(
         command: 'nmap -O 10.0.0.45',
@@ -73,6 +87,12 @@ final List<GameLevel> gameLevels = [
         'Temukan port terbuka dengan full scan dan eksploitasi FTP anonymous.',
     briefingText:
         'IP 172.16.0.20 terdeteksi memiliki service terbuka. Scan semua port lalu cari celah. FTP anonymous mungkin aktif!',
+    storyText:
+        'Operator, XiuCorp SOC menerima laporan bahwa server di 172.16.0.20 -- yang merupakan '
+        'backup storage untuk data klien kami di kawasan Kembang Jepun -- memiliki konfigurasi FTP yang rentan.\n\n'
+        'Anonymous access kemungkinan besar masih aktif. Jika benar, ini bisa menjadi '
+        'pintu masuk bagi sindikat peretas untuk mencuri data sensitif klien.\n\n'
+        'Full port scan segera, lalu eksploitasi FTP anonymous. Kecepatan adalah kunci!',
     commands: [
       LevelCommand(
         command: 'nmap -p- 172.16.0.20',
@@ -101,6 +121,13 @@ final List<GameLevel> gameLevels = [
     objective: 'Peta seluruh subnet dengan ping sweep dan traceroute ke gateway.',
     briefingText:
         'Jaringan 192.168.0.0/24 perlu dipetakan. Temukan semua host aktif, lalu traceroute ke gateway untuk memahami topologi.',
+    storyText:
+        'XiuCorp SOC sedang melakukan audit keamanan jaringan internal. Subnet 192.168.0.0/24 '
+        'mencakup beberapa server kritis di gedung pusat Kya-Kya.\n\n'
+        'Sebelum kita bisa melindungi jaringan ini, kita harus memahami topologinya. '
+        'Temukan semua host aktif, identifikasi gateway, dan peta jalur paket.\n\n'
+        'Data ini akan digunakan untuk memperkuat pertahanan perimeter kami. '
+        'Jaringan yang tidak dikenal adalah jaringan yang tidak terlindungi.',
     commands: [
       LevelCommand(
         command: 'nmap -sn 192.168.0.0/24',
@@ -131,6 +158,13 @@ final List<GameLevel> gameLevels = [
         'Jalankan NSE vulnerability scripts pada target untuk menemukan CVE.',
     briefingText:
         'Target 10.10.10.5 diduga memiliki vulnerability. Gunakan Nmap Scripting Engine (NSE) untuk deteksi otomatis!',
+    storyText:
+        'Operator, XiuCorp Threat Intelligence mendeteksi anomali pada server 10.10.10.5. '
+        'Server ini merupakan edge node yang melindungi akses ke data center utama kami.\n\n'
+        'Kecurigaan kami: sindikat peretas sudah menanam exploit yang menunggu waktu yang tepat. '
+        'Gunakan NSE vulnerability scanner untuk mendeteksi CVE yang mungkin ada.\n\n'
+        'Jika ditemukan celah kritis, kita harus eksploitasi SEKARANG sebelum mereka melakukannya. '
+        'Waktu kita melawan kita.',
     commands: [
       LevelCommand(
         command: 'nmap --script vuln 10.10.10.5',
@@ -164,7 +198,14 @@ final List<GameLevel> gameLevels = [
     objective:
         'Lakukan brute force pada SSH menggunakan wordlist untuk mendapat akses.',
     briefingText:
-        'Server SSH di 192.168.2.50 menggunakan password lemah. Hydra dapat membobol — gunakan wordlist rockyou!',
+        'Server SSH di 192.168.2.50 menggunakan password lemah. Hydra dapat membobol -- gunakan wordlist rockyou!',
+    storyText:
+        'Laporan dari XiuCorp Red Team: server staging di 192.168.2.50 masih menggunakan '
+        'kredensial default yang lemah. Server ini menyimpan source code internal yang SANGAT sensitif.\n\n'
+        'Sindikat peretas GLOBAL sedang aktif mencari celah seperti ini. Jika mereka masuk duluan, '
+        'seluruh codebase XiuCorp bisa bocor ke publik.\n\n'
+        'Kamu harus masuk duluan. Brute force SSH dengan wordlist rockyou. '
+        'Temukan kredensial yang lemah dan kuasai server ini.',
     commands: [
       LevelCommand(
         command: 'hydra -l admin -P /usr/share/wordlists/rockyou.txt ssh://192.168.2.50',
@@ -196,6 +237,13 @@ final List<GameLevel> gameLevels = [
         'Eksploitasi FTP anonymous login dan exfiltrate file sensitif dari server.',
     briefingText:
         'Server FTP di 10.20.30.40 mengizinkan anonymous login. Masuk dan cari file config yang tersimpan di sana!',
+    storyText:
+        'Operator, ini situasi darurat. Server FTP di 10.20.30.40 merupakan backup database '
+        'untuk seluruh klien XiuCorp di wilayah Jawa Timur.\n\n'
+        'Anonymous access masih aktif -- ini celah KEAMANAN KRITIS. '
+        'Ada indikasi bahwa file konfigurasi database dengan kredensial production tersimpan di sana.\n\n'
+        'Eksploitasi akses anonymous, cari file konfigurasi, dan exfiltrate data sensitifnya. '
+        'Kita harus memastikan tidak ada yang bisa menyalahgunakan akses ini.',
     commands: [
       LevelCommand(
         command: 'ftp 10.20.30.40',
@@ -233,6 +281,13 @@ final List<GameLevel> gameLevels = [
         'Bypass firewall menggunakan packet fragmentation dan decoy scanning.',
     briefingText:
         'Target 192.168.5.100 dilindungi firewall. Gunakan teknik fragmentasi dan decoy untuk menembus pertahanannya!',
+    storyText:
+        'Target 192.168.5.100 adalah gateway utama yang melindungi infrastructure penting XiuCorp. '
+        'Firewall-nya dikonfigurasi ketat -- IDS/IPS aktif dan logging semua traffic mencurigakan.\n\n'
+        'Tapi ada celah: firewall rule kita belum mengantisipasi fragmentasi paket. '
+        'Gunakan teknik fragmentation untuk bypass, lalu decoy scan untuk menyembunyikan jejakmu.\n\n'
+        'Jika kita bisa menembus gateway ini, kita akan punya akses ke seluruh segmen jaringan internal. '
+        'Ini momen kritis.',
     commands: [
       LevelCommand(
         command: 'nmap -f 192.168.5.100',
@@ -263,6 +318,12 @@ final List<GameLevel> gameLevels = [
         'Akses auth log dan hapus jejak aktivitas hacking dari sistem target.',
     briefingText:
         'Kamu sudah masuk ke 10.0.1.15. Sekarang bersihkan jejakmu! Hapus auth.log dan bash_history sebelum admin sadar!',
+    storyText:
+        'Operator, kamu sudah berhasil masuk ke 10.0.1.15 -- server monitoring XiuCorp di Kya-Kya.\n\n'
+        'Masalahnya: setiap perintahmu terekam di auth.log dan bash_history. '
+        'Jika admin sistem menemukan jejakmu, mereka akan mengunci seluruh infrastruktur dan kita kehilangan akses.\n\n'
+        'Bersihkan jejakmu. Hapus auth.log entries yang mencurigakan, '
+        'dan kosongkan bash_history. Jadilah ghost -- tidak ada yang tahu kamu pernah di sini.',
     commands: [
       LevelCommand(
         command: 'cat /var/log/auth.log',
@@ -300,6 +361,13 @@ final List<GameLevel> gameLevels = [
     objective: 'Crack password hash MD5 dari file shadow dan login ke sistem.',
     briefingText:
         'File /etc/shadow dari 172.20.10.8 sudah di-dump. Ada hash MD5 yang perlu di-crack. Gunakan john atau hashcat!',
+    storyText:
+        'XiuCorp Red Team berhasil mengekstrak file /etc/shadow dari 172.20.10.8 -- '
+        'server authentication yang mengelola seluruh akses VPN karyawan.\n\n'
+        'Ada hash MD5 yang harus di-crack. Jika berhasil, kita akan memiliki akses root ke server ini. '
+        'Dari sini, kita bisa mematikan VPN tunnel yang dikompromikan dan memulihkan keamanan akses.\n\n'
+        'Gunakan John the Ripper dengan wordlist rockyou. Setelah password ter-crack, '
+        'login langsung sebagai root. Waktu sangat terbatas.',
     commands: [
       LevelCommand(
         command: 'john --format=md5crypt --wordlist=/usr/share/wordlists/rockyou.txt hash.txt',
@@ -333,6 +401,14 @@ final List<GameLevel> gameLevels = [
         'Identifikasi cipher lemah pada HTTPS target dan eksploitasi konfigurasi SSL yang salah.',
     briefingText:
         'Target 203.0.113.50 menggunakan SSL/TLS dengan cipher yang deprecated. Gunakan openssl untuk audit dan eksploitasi!',
+    storyText:
+        'Operator, ini level LANJUTAN. Target 203.0.113.50 adalah payment gateway eksternal '
+        'yang digunakan oleh beberapa klien XiuCorp di kawasan Asia Tenggara.\n\n'
+        'Intel kami menunjukkan bahwa server ini masih menggunakan cipher RC4-MD5 yang sudah usang. '
+        'Ini berarti setiap transaksi finansial yang melalui server ini BISA diintercept.\n\n'
+        'Audit SSL/TLS dengan openssl, identifikasi cipher lemah, '
+        'dan buktikan bahwa serangan POODLE mungkin dilakukan. '
+        'Ini bukan sekadar tes -- ini perlindungan nyata terhadap pencurian data finansial.',
     commands: [
       LevelCommand(
         command: 'openssl s_client -connect 203.0.113.50:443',
@@ -364,6 +440,14 @@ final List<GameLevel> gameLevels = [
         'Lakukan privilege escalation dari user biasa ke root menggunakan SUID binary.',
     briefingText:
         'Kamu sudah masuk sebagai www-data di 10.30.0.100. Sekarang naik privilege ke root! Cari SUID binary yang bisa dieksploitasi!',
+    storyText:
+        'Operator, kamu sudah memiliki akses user biasa ke 10.30.0.100 -- '
+        'web server utama portal klien XiuCorp. Tapi kamu hanya www-data.\n\n'
+        'Untuk mengambil alih kontrol penuh server ini, kamu butuh akses root. '
+        'Cari SUID binary yang bisa dieksploitasi untuk privilege escalation.\n\n'
+        'Server ini menjalankan aplikasi kritis yang memproses data jutaan pengguna. '
+        'Jika sindikat peretas mengambil alih sebelum kita, dampaknya akan sangat besar. '
+        'Naik ke root SEKARANG.',
     commands: [
       LevelCommand(
         command: 'find / -perm -4000 -type f 2>/dev/null',
@@ -395,6 +479,15 @@ final List<GameLevel> gameLevels = [
         'Eksploitasi SQL Injection pada login form web target dan dump database.',
     briefingText:
         'Web app di http://192.168.100.200 memiliki SQL Injection pada form login. Gunakan sqlmap untuk dump seluruh database!',
+    storyText:
+        'Operator, ini adalah target KRITIS. 192.168.100.200 adalah aplikasi web internal '
+        'XiuCorp yang menyimpan data seluruh karyawan di Asia Tenggara -- termasuk data pribadi, '
+        'gaji, dan akses sistem.\n\n'
+        'Tim keamanan kami menemukan kerentanan SQL Injection pada form login. '
+        'Jika sindikat menemukan celah ini duluan, mereka bisa dump SELURUH database.\n\n'
+        'Gunakan sqlmap untuk mengeksploitasi vulnerability ini. '
+        'Dump database untuk membuktikan dampaknya, lalu laporkan ke tim patching kami. '
+        'Kita harus memperbaiki ini sebelum dieksploitasi secara nyata.',
     commands: [
       LevelCommand(
         command: 'sqlmap -u "http://192.168.100.200/login.php?id=1" --dbs',
@@ -426,6 +519,13 @@ final List<GameLevel> gameLevels = [
         'Inject XSS payload pada form komentar dan steal cookie admin.',
     briefingText:
         'Forum di http://172.31.5.88 tidak sanitize input! Inject XSS payload untuk curi cookie session admin. Ini kesempatanmu!',
+    storyText:
+        'Operator, forum diskusi internal XiuCorp di 172.31.5.88 memiliki kerentanan XSS yang belum diperbaiki. '
+        'Forum ini digunakan oleh seluruh tim engineering di Surabaya untuk berdiskusi tentang proyek rahasia.\n\n'
+        'Jika seseorang menyuntikkan payload XSS, mereka bisa mencuri session cookie admin '
+        'dan mengambil alih kontrol penuh forum -- termasuk membaca semua percakapan rahasia.\n\n'
+        'Tugasmu: buktikan bahwa serangan ini mungkin dengan menginject XSS payload '
+        'dan mencuri cookie session admin. Ini demonstrasi keamanan, bukan serangan nyata.',
     commands: [
       LevelCommand(
         command: 'curl http://172.31.5.88/comment -d "text=<script>alert(1)</script>"',
@@ -454,9 +554,18 @@ final List<GameLevel> gameLevels = [
     category: 'ADVANCED',
     targetIP: '10.0.0.1',
     objective:
-        'Lakukan full chain attack: recon → exploit → escalate → persistence. Ambil alih seluruh sistem!',
+        'Lakukan full chain attack: recon -> exploit -> escalate -> persistence. Ambil alih seluruh sistem!',
     briefingText:
-        'MISI FINAL! Target: 10.0.0.1 — Server utama XiuCorp. Lakukan full chain attack. Tidak ada yang menghentikanmu. INI SAATNYA!',
+        'MISI FINAL! Target: 10.0.0.1 -- Server utama XiuCorp. Lakukan full chain attack. Tidak ada yang menghentikanmu. INI SAATNYA!',
+    storyText:
+        'Operator, ini MISI FINAL. Target: 10.0.0.1 -- server utama XiuCorp di jantung Kya-Kya, Surabaya.\n\n'
+        'Sindikat peretas GLOBAL sudah menembus pertahanan luar dan mengancam seluruh infrastruktur kami. '
+        'Jika server ini jatuh, seluruh operasi cyber defense di Asia Tenggara akan lumpuh.\n\n'
+        'Kamu adalah GARIS PERTAHANAN TERAKHIR. Lakukan full chain attack: '
+        'recon -> exploit -> escalate -> persistence. '
+        'Ambil alih kendali sistem dan amankan XiuCorp dari ancaman ini.\n\n'
+        'Seluruh tim XiuCorp, semua klien kami, dan keamanan siber regional bergantung padamu.\n\n'
+        'Jangan gagal. Ini SAATNYA.',
     commands: [
       LevelCommand(
         command: 'nmap -sV -O --script vuln 10.0.0.1',
@@ -481,7 +590,7 @@ final List<GameLevel> gameLevels = [
         hint: 'Pasang reverse shell cron job untuk persistence',
         keywords: ['crontab', 'cron', '/dev/tcp', 'reverse'],
         outputSuccess:
-            'Cron job injected!\n*/5 * * * * reverse shell to 10.9.9.9:4444\n[+] PERSISTENCE ESTABLISHED!\n\n╔══════════════════════════════════════╗\n║  SYSTEM ZERO COMPROMISED!            ║\n║  FULL ACCESS — ALL 15 LEVELS DONE!   ║\n╚══════════════════════════════════════╝',
+            'Cron job injected!\n*/5 * * * * reverse shell to 10.9.9.9:4444\n[+] PERSISTENCE ESTABLISHED!\n\n[SYSTEM ZERO COMPROMISED!]\n[FULL ACCESS -- ALL 15 LEVELS DONE!]',
         outputFail:
             '[ERROR] Cron syntax wrong. Hint: echo "<cron>" >> /etc/crontab',
       ),

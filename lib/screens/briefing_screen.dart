@@ -184,8 +184,8 @@ class _BriefingScreenState extends State<BriefingScreen> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('⚡ ',
-                                style: TextStyle(fontSize: 14)),
+                            Icon(Icons.bolt, color: Color(0xFFff9999), size: 16),
+                            const SizedBox(width: 6),
                             Expanded(
                               child: Text(
                                 level.objective,

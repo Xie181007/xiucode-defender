@@ -1,4 +1,6 @@
 // lib/main.dart
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -17,8 +19,10 @@ void main() {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  // Full immersive mode
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  // Full immersive mode (mobile only)
+  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  }
   runApp(
     ChangeNotifierProvider(
       create: (_) => GameState(),

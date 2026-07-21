@@ -104,26 +104,42 @@ class GameState extends ChangeNotifier {
   void startExploitation() {
     _screen = GameScreen.playing;
     _isTimerRunning = true;
-    _addLine(
-      '╔══════════════════════════════════════════════════════╗',
-      LineType.system,
-    );
-    _addLine(
-      '║  XiuCode Defender v0.1 — EXPLOITATION TERMINAL      ║',
-      LineType.system,
-    );
-    _addLine(
-      '╚══════════════════════════════════════════════════════╝',
-      LineType.system,
-    );
     _addLine('', LineType.system);
-    _addLine(
-      '[ TARGET ] ${currentLevel.targetIP}',
-      LineType.system,
-    );
-    _addLine('[ OBJECTIVE ] ${currentLevel.objective}', LineType.system);
+    _addLine('root@xiu-defender:/var/log# uname -a', LineType.input);
+    _addLine('Linux xiu-defender 5.15.0-kali1-amd64 #1 SMP Debian 5.15.15-2kali1 x86_64 GNU/Linux', LineType.system);
+    _addLine('', LineType.system);
+    _addLine('root@xiu-defender:/var/log# id', LineType.input);
+    _addLine('uid=0(root) gid=0(root) groups=0(root)', LineType.system);
+    _addLine('', LineType.system);
+    _addLine('root@xiu-defender:~# ls /opt/xiucorp/bin/', LineType.input);
+    _addLine('nmap  hydra  sqlmap  john  metasploit  xiucore', LineType.system);
+    _addLine('', LineType.system);
+    _addLine('[ xiucore ] Establishing encrypted tunnel to XiuCorp SOC...', LineType.system);
+    _addLine('[ xiucore ] Tunnel established. Secure channel: ACTIVE', LineType.system);
+    _addLine('[ xiucore ] Operator authenticated. Clearance: LEVEL-${_currentLevelIndex + 1}', LineType.system);
+    _addLine('', LineType.system);
+    _addLine('> TARGET: ${currentLevel.targetIP}', LineType.hint);
+    _addLine('> OBJECTIVE: ${currentLevel.objective}', LineType.hint);
     _addLine('', LineType.system);
     _addLine('> HINT: ${currentCommand.hint}', LineType.hint);
+    _addLine('', LineType.system);
+    notifyListeners();
+  }
+
+  void injectInboxMessage() {
+    if (_screen != GameScreen.playing) return;
+    if (currentLevel.storyText.isEmpty) return;
+    _addLine('', LineType.system);
+    _addLine('------------------------------------------------------------', LineType.system);
+    _addLine(' INCOMING TRANSMISSION // CLASSIFIED // PRIORITY: URGENT', LineType.inbox);
+    _addLine(' FROM: XIU Artificial Intelligence // XiuCorp SOC Division', LineType.inbox);
+    _addLine('------------------------------------------------------------', LineType.system);
+    _addLine('', LineType.system);
+    _addLine(currentLevel.storyText, LineType.inbox);
+    _addLine('', LineType.system);
+    _addLine('------------------------------------------------------------', LineType.system);
+    _addLine(' END OF TRANSMISSION', LineType.inbox);
+    _addLine('------------------------------------------------------------', LineType.system);
     _addLine('', LineType.system);
     notifyListeners();
   }
@@ -293,7 +309,7 @@ class GameState extends ChangeNotifier {
 }
 
 // ─── Terminal Line Model ───
-enum LineType { system, input, success, error, hint }
+enum LineType { system, input, success, error, hint, inbox }
 
 class TerminalLine {
   final String text;

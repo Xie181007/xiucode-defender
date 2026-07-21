@@ -46,18 +46,25 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
               // Title
               Column(
                 children: [
-                  const Text(
-                    '🏆  LEADERBOARD',
-                    style: TextStyle(
-                      fontFamily: 'Courier New',
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFFFD700),
-                      letterSpacing: 4,
-                      shadows: [
-                        Shadow(color: Color(0xFFFFD700), blurRadius: 20),
-                      ],
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.emoji_events_outlined, color: Color(0xFFFFD700), size: 26),
+                      const SizedBox(width: 8),
+                      Text(
+                        'LEADERBOARD',
+                        style: TextStyle(
+                          fontFamily: 'Courier New',
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFFFD700),
+                          letterSpacing: 4,
+                          shadows: [
+                            Shadow(color: Color(0xFFFFD700), blurRadius: 20),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(

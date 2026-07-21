@@ -59,7 +59,7 @@ class TimerDisplay extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            '⏱ TIME REMAINING',
+            'TIME REMAINING',
             style: TextStyle(
               fontFamily: 'Courier New',
               fontSize: 10,

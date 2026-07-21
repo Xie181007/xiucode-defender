@@ -42,7 +42,8 @@ class _MenuScreenState extends State<MenuScreen> {
         Container(color: const Color(0xFF121212).withValues(alpha: 0.55)),
 
         SafeArea(
-          child: Column(
+          child: SingleChildScrollView(
+            child: Column(
             children: [
               const SizedBox(height: 24),
               // ── Title ──
@@ -96,7 +97,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 ],
               ).animate().fadeIn(duration: 800.ms).slideY(begin: -0.3),
 
-              const Spacer(),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.08),
 
               // ── XIU Mascot ──
               const XiuMascot(state: XiuState.normal, size: 180)
@@ -123,7 +124,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '⚡ CODENAME OPERATOR',
+                      'CODENAME OPERATOR',
                       style: TextStyle(
                         fontFamily: 'Courier New',
                         fontSize: 9,
@@ -161,19 +162,21 @@ class _MenuScreenState extends State<MenuScreen> {
                 ),
               ).animate().fadeIn(delay: 900.ms),
 
-              const Spacer(),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.05),
 
               // ── Buttons ──
               Column(
                 children: [
                   _CyberButton(
-                    label: '▶  MULAI OPERASI',
+                    label: 'MULAI OPERASI',
+                    icon: Icons.play_arrow,
                     color: const Color(0xFF00ff41),
                     onTap: () => game.startGame(),
                   ),
                   const SizedBox(height: 14),
                   _CyberButton(
-                    label: '🏆  LEADERBOARD',
+                    label: 'LEADERBOARD',
+                    icon: Icons.emoji_events_outlined,
                     color: const Color(0xFF00b4d8),
                     onTap: () => context.read<GameState>().goToLeaderboard(),
                   ),
@@ -196,6 +199,7 @@ class _MenuScreenState extends State<MenuScreen> {
               const SizedBox(height: 24),
             ],
           ),
+          ),
         ),
       ],
     );
@@ -204,11 +208,13 @@ class _MenuScreenState extends State<MenuScreen> {
 
 class _CyberButton extends StatefulWidget {
   final String label;
+  final IconData? icon;
   final Color color;
   final VoidCallback onTap;
 
   const _CyberButton({
     required this.label,
+    this.icon,
     required this.color,
     required this.onTap,
   });
@@ -243,16 +249,25 @@ class _CyberButtonState extends State<_CyberButton> {
               ? []
               : [BoxShadow(color: widget.color.withValues(alpha: 0.3), blurRadius: 16)],
         ),
-        child: Text(
-          widget.label,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: 'Courier New',
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-            color: widget.color,
-            letterSpacing: 2,
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (widget.icon != null) ...[
+              Icon(widget.icon, size: 18, color: widget.color),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              widget.label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Courier New',
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: widget.color,
+                letterSpacing: 2,
+              ),
+            ),
+          ],
         ),
       ),
     );

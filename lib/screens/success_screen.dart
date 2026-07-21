@@ -39,15 +39,22 @@ class SuccessScreen extends StatelessWidget {
                     BoxShadow(color: Color(0xFF00ff41), blurRadius: 30),
                   ],
                 ),
-                child: const Text(
-                  '✓  BREACH SUCCESSFUL',
-                  style: TextStyle(
-                    fontFamily: 'Courier New',
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF00ff41),
-                    letterSpacing: 3,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.check_circle_outline, color: Color(0xFF00ff41), size: 22),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'BREACH SUCCESSFUL',
+                      style: TextStyle(
+                        fontFamily: 'Courier New',
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF00ff41),
+                        letterSpacing: 3,
+                      ),
+                    ),
+                  ],
                 ),
               )
                   .animate()
@@ -128,15 +135,26 @@ class SuccessScreen extends StatelessWidget {
                           color: Color(0xFF00ff41), blurRadius: 20),
                     ],
                   ),
-                  child: Text(
-                    isLastLevel ? '🏆  SELESAI — LIHAT SKOR' : '▶  LEVEL BERIKUTNYA',
-                    style: const TextStyle(
-                      fontFamily: 'Courier New',
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF00ff41),
-                      letterSpacing: 2,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isLastLevel ? Icons.emoji_events_outlined : Icons.play_arrow,
+                        color: Color(0xFF00ff41),
+                        size: 18,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        isLastLevel ? 'SELESAI - LIHAT SKOR' : 'LEVEL BERIKUTNYA',
+                        style: const TextStyle(
+                          fontFamily: 'Courier New',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF00ff41),
+                          letterSpacing: 2,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ).animate().fadeIn(delay: 600.ms),

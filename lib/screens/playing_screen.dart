@@ -5,7 +5,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../utils/game_state.dart';
 import '../widgets/xiu_mascot.dart';
-import '../widgets/timer_display.dart';
 
 class PlayingScreen extends StatefulWidget {
   const PlayingScreen({super.key});
@@ -20,11 +19,13 @@ class _PlayingScreenState extends State<PlayingScreen>
   final ScrollController _scrollCtrl = ScrollController();
   final FocusNode _focusNode = FocusNode();
   Timer? _gameTimer;
+  Timer? _inboxTimer;
 
   @override
   void initState() {
     super.initState();
     _startTimer();
+    _startInboxTimer();
     // Auto-focus input
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
@@ -39,9 +40,31 @@ class _PlayingScreenState extends State<PlayingScreen>
     });
   }
 
+  void _startInboxTimer() {
+    _inboxTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted) {
+        context.read<GameState>().injectInboxMessage();
+        _scrollToBottom();
+      }
+    });
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollCtrl.hasClients) {
+        _scrollCtrl.animateTo(
+          _scrollCtrl.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
   @override
   void dispose() {
     _gameTimer?.cancel();
+    _inboxTimer?.cancel();
     _inputCtrl.dispose();
     _scrollCtrl.dispose();
     _focusNode.dispose();
@@ -110,14 +133,17 @@ class _PlayingScreenState extends State<PlayingScreen>
     final level = game.currentLevel;
     final isDanger = game.isTimeDanger;
 
+    final String timeFormatted =
+        '${(game.secondsRemaining ~/ 60).toString().padLeft(2, '0')}:${(game.secondsRemaining % 60).toString().padLeft(2, '0')}';
+
     return Container(
       color: const Color(0xFF121212),
       child: SafeArea(
         child: Column(
           children: [
-            // ── Top HUD (2x2 Grid on Left + Taller Vertical Timer on Right) ──
+            // ── Top HUD (2 rows × 3 columns) ──
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
@@ -126,37 +152,68 @@ class _PlayingScreenState extends State<PlayingScreen>
                 ),
                 color: const Color(0xFF161616),
               ),
-              child: IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Left 2x2 Grid of Info Badges
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(child: _hudBadge('LEVEL', '${level.id}/15', const Color(0xFF00ff41))),
-                              const SizedBox(width: 8),
-                              Expanded(child: _hudBadge('SCORE', '${game.totalScore + game.levelScore}', const Color(0xFF00b4d8))),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Expanded(child: _hudBadge('ERRORS', '${game.wrongCount}', isDanger ? const Color(0xFFFF4444) : const Color(0xFFff0066))),
-                              const SizedBox(width: 8),
-                              Expanded(child: _hudBadge('OPERATOR', game.username.toUpperCase(), const Color(0xFFFFD700))),
-                            ],
-                          ),
-                        ],
+              child: Column(
+                children: [
+                  // Row 1: OPERATOR | LEVEL | SCORE
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _HudBox(
+                          label: 'OPERATOR',
+                          value: game.username.toUpperCase(),
+                          color: const Color(0xFFFFD700),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Right Taller Vertical Timer
-                    TimerDisplay(secondsRemaining: game.secondsRemaining),
-                  ],
-                ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _HudBox(
+                          label: 'LEVEL',
+                          value: '${level.id}/15',
+                          color: const Color(0xFF00ff41),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _HudBox(
+                          label: 'SCORE',
+                          value: '${game.totalScore + game.levelScore}',
+                          color: const Color(0xFF00b4d8),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  // Row 2: TIME REMAINING | ERRORS 1 | ERRORS 2
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _HudBox(
+                          label: 'TIME REMAINING',
+                          value: timeFormatted,
+                          color: isDanger ? const Color(0xFFFF4444) : const Color(0xFF00ff41),
+                          valueFontSize: 22,
+                          showClockIcon: true,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _HudBox(
+                          label: 'ERRORS',
+                          value: '${game.wrongCount}',
+                          color: isDanger ? const Color(0xFFFF4444) : const Color(0xFFff0066),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _HudBox(
+                          label: 'ERRORS',
+                          value: '${game.wrongCount}',
+                          color: isDanger ? const Color(0xFFFF4444) : const Color(0xFFff0066),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
 
@@ -167,10 +224,10 @@ class _PlayingScreenState extends State<PlayingScreen>
                   // The Terminal Container
                   Column(
                     children: [
-                      // Terminal header (matching mockup text)
+                      // Terminal header
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        color: const Color(0xFF1a1a1a),
+                        color: const Color(0xFF2d2d2d),
                         child: Row(
                           children: [
                             _dot(const Color(0xFFFF5F57)),
@@ -181,7 +238,7 @@ class _PlayingScreenState extends State<PlayingScreen>
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                'terminal kali : ${game.username}@xiucode',
+                                'root@xiu-defender: ${level.targetIP}',
                                 style: const TextStyle(
                                   fontFamily: 'Courier New',
                                   fontSize: 12,
@@ -191,9 +248,8 @@ class _PlayingScreenState extends State<PlayingScreen>
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            // Target IP & Command progress info
                             Text(
-                              'IP: ${level.targetIP} | CMD: ${game.currentCommandIndex + 1}/${game.commandsInLevel}',
+                              'CMD ${game.currentCommandIndex + 1}/${game.commandsInLevel}',
                               style: const TextStyle(
                                 fontFamily: 'Courier New',
                                 fontSize: 10,
@@ -374,7 +430,7 @@ class _PlayingScreenState extends State<PlayingScreen>
       SnackBar(
         backgroundColor: const Color(0xFF1a1a00),
         content: Text(
-          '💡 ${game.currentCommand.hint}',
+          game.currentCommand.hint,
           style: const TextStyle(
             fontFamily: 'Courier New',
             color: Color(0xFFFFAA00),
@@ -386,51 +442,84 @@ class _PlayingScreenState extends State<PlayingScreen>
     );
   }
 
-  Widget _hudBadge(String label, String value, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color.withValues(alpha: 0.5)),
-        color: color.withValues(alpha: 0.06),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(label,
-              style: TextStyle(
-                  fontFamily: 'Courier New',
-                  fontSize: 9,
-                  color: color.withValues(alpha: 0.6),
-                  letterSpacing: 1)),
-          Text(value,
-              style: TextStyle(
-                  fontFamily: 'Courier New',
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: color)),
-        ],
-      ),
-    );
-  }
-
   Widget _dot(Color color) => Container(
         width: 10,
         height: 10,
         decoration: BoxDecoration(color: color, shape: BoxShape.circle),
       );
 
-  Color _xiuStatusColor(XiuState s) => switch (s) {
-        XiuState.success => const Color(0xFF00ff41),
-        XiuState.fail => const Color(0xFFFF4444),
-        _ => const Color(0xFF00b4d8),
-      };
+}
 
-  String _xiuStatusLabel(XiuState s) => switch (s) {
-        XiuState.success => 'SUCCESS',
-        XiuState.fail => 'ALERT!',
-        _ => 'STANDBY',
-      };
+class _HudBox extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  final double valueFontSize;
+  final bool showClockIcon;
+
+  const _HudBox({
+    required this.label,
+    required this.value,
+    required this.color,
+    this.valueFontSize = 16,
+    this.showClockIcon = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 70,
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: color.withValues(alpha: 0.6), width: 2),
+        color: color.withValues(alpha: 0.06),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: 'Courier New',
+              fontSize: 9,
+              color: color.withValues(alpha: 0.6),
+              letterSpacing: 1,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              if (showClockIcon) ...[
+                Icon(Icons.access_time, size: 14, color: color),
+                const SizedBox(width: 4),
+              ],
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    value,
+                    style: TextStyle(
+                      fontFamily: 'Courier New',
+                      fontSize: valueFontSize,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _TerminalLineWidget extends StatelessWidget {
@@ -459,18 +548,38 @@ class _TerminalLineWidget extends StatelessWidget {
       case LineType.system:
         color = const Color(0xFF888888);
         break;
+      case LineType.inbox:
+        color = const Color(0xFF00b4d8);
+        weight = FontWeight.bold;
+        break;
     }
+
+    final bool isInboxBody = line.type == LineType.inbox;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 2),
-      child: Text(
-        line.text,
-        style: TextStyle(
-          fontFamily: 'Courier New',
-          fontSize: 12,
-          color: color,
-          fontWeight: weight,
-          height: 1.4,
+      child: Container(
+        decoration: isInboxBody
+            ? BoxDecoration(
+                color: const Color(0xFF00b4d8).withValues(alpha: 0.04),
+                border: Border(
+                  left: BorderSide(
+                    color: const Color(0xFF00b4d8).withValues(alpha: 0.3),
+                    width: 2,
+                  ),
+                ),
+              )
+            : null,
+        padding: isInboxBody ? const EdgeInsets.only(left: 6) : null,
+        child: Text(
+          line.text,
+          style: TextStyle(
+            fontFamily: 'Courier New',
+            fontSize: 12,
+            color: color,
+            fontWeight: weight,
+            height: 1.4,
+          ),
         ),
       ),
     );

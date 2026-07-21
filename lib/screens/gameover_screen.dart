@@ -126,13 +126,15 @@ class GameOverScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _actionButton(
-                    '🔄  COBA LAGI',
+                    Icons.refresh,
+                    'COBA LAGI',
                     const Color(0xFFFF4444),
                     () => game.retryLevel(),
                   ),
                   const SizedBox(width: 14),
                   _actionButton(
-                    '🏠  MENU',
+                    Icons.home,
+                    'MENU',
                     const Color(0xFF00b4d8),
                     () => game.goToMenu(),
                   ),
@@ -175,7 +177,7 @@ class GameOverScreen extends StatelessWidget {
     );
   }
 
-  Widget _actionButton(String label, Color color, VoidCallback onTap) {
+  Widget _actionButton(IconData icon, String label, Color color, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -186,15 +188,22 @@ class GameOverScreen extends StatelessWidget {
           color: color.withValues(alpha: 0.1),
           boxShadow: [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 16)],
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontFamily: 'Courier New',
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: color,
-            letterSpacing: 1.5,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: color, size: 16),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'Courier New',
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: color,
+                letterSpacing: 1.5,
+              ),
+            ),
+          ],
         ),
       ),
     );
